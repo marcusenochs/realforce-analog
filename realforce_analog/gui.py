@@ -1,4 +1,4 @@
-"""Guided arrow mapping and a live steering preview for the connected R3SD11."""
+"""Calibrate R3SD11 sensor telemetry and send analog input to a vJoy X axis."""
 
 from collections import deque
 from dataclasses import asdict
@@ -191,7 +191,7 @@ class App:
 
     def _build(self):
         root = self.root
-        root.title("Realforce Analog · Arrow Steering")
+        root.title("Realforce to vJoy")
         root.configure(bg=BG)
         root.geometry("860x820")
         root.minsize(790, 800)
@@ -206,14 +206,14 @@ class App:
                         borderwidth=0, thickness=12)
         shell = tk.Frame(root, bg=BG, padx=28, pady=22)
         shell.pack(fill="both", expand=True)
-        tk.Label(shell, text="REALFORCE ANALOG", bg=BG, fg=ACCENT,
+        tk.Label(shell, text="REALFORCE → VJOY", bg=BG, fg=ACCENT,
                  font=("Segoe UI", 10, "bold")).pack(anchor="w")
-        tk.Label(shell, text="Arrow steering, with a lighter touch", bg=BG, fg=FG,
+        tk.Label(shell, text="Key depth to a virtual joystick axis", bg=BG, fg=FG,
                  font=("Segoe UI", 23, "bold")).pack(anchor="w", pady=(3, 5))
         tk.Label(shell, textvariable=self.connection, bg=BG, fg=MUTED,
                  font=("Segoe UI", 10)).pack(anchor="w")
 
-        setup = self.card(shell, "1   Teach the two steering keys")
+        setup = self.card(shell, "1   Calibrate the Left / Right arrows")
         tk.Label(setup, text="Use the mouse for these buttons. Hold the requested arrow fully down\n"
                             "until its scan finishes; release every other key.",
                  bg=CARD, fg=MUTED, justify="left", font=("Segoe UI", 10)).pack(anchor="w", pady=(0, 10))
@@ -231,7 +231,7 @@ class App:
             tk.Label(setup, textvariable=var, bg=CARD, fg=MUTED,
                      font=("Segoe UI", 10)).pack(anchor="w")
 
-        live = self.card(shell, "2   Preview physical key depth")
+        live = self.card(shell, "2   Preview calibrated input")
         for name, attribute in (("← Left", "left_bar"), ("→ Right", "right_bar")):
             row = tk.Frame(live, bg=CARD)
             row.pack(fill="x", pady=4)
@@ -256,7 +256,7 @@ class App:
         self.preview_button = ttk.Button(controls, text="Start preview", style="Accent.TButton",
                                          command=lambda: self.preview(False))
         self.preview_button.pack(side="left", padx=(0, 10))
-        self.drive_button = ttk.Button(controls, text="Start vJoy steering", command=lambda: self.preview(True))
+        self.drive_button = ttk.Button(controls, text="Start vJoy output", command=lambda: self.preview(True))
         self.drive_button.pack(side="left", padx=(0, 8))
         tk.Label(controls, text="Device", bg=BG, fg=MUTED,
                  font=("Segoe UI", 9)).pack(side="left", padx=(3, 5))
@@ -266,8 +266,8 @@ class App:
         self.device_spin.pack(side="left")
         self.stop_button = ttk.Button(controls, text="Stop", command=self.stop)
         self.stop_button.pack(side="right")
-        tk.Label(shell, text="Trackmania: ↑ accelerate · Space brake. Unbind keyboard ← / → steering\n"
-                             "and bind the virtual joystick X axis. vJoy must be installed separately.",
+        tk.Label(shell, text="Output: Left/Right arrows → vJoy X axis. Bind this axis in your application.\n"
+                             "Remove matching digital key bindings to avoid full-strength digital input.",
                  bg=BG, fg=MUTED, font=("Segoe UI", 9), justify="left").pack(anchor="w", pady=(4, 10))
         self.status_label = tk.Label(shell, textvariable=self.status, bg=BG, fg=ACCENT,
                                      wraplength=790, anchor="w", justify="left", font=("Segoe UI", 10))
@@ -311,7 +311,7 @@ class App:
             return
         self.busy = True
         self.status_label.configure(fg=ACCENT)
-        self.status.set("vJoy steering active. Stop centers and releases the virtual axis."
+        self.status.set("vJoy output active. Stop centers and releases the virtual axis."
                         if output_enabled else "Preview active. Press the arrows gently through their travel.")
         self._buttons()
         calibration = SteeringCalibration(self.calibration["left"], self.calibration["right"])

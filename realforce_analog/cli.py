@@ -6,7 +6,7 @@ from .diagnostics import benchmark, matrix_snapshot, save_report
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Custom R3SD11 read-only sensor diagnostics")
+    parser = argparse.ArgumentParser(description="REALFORCE R3SD11 sensor diagnostics and vJoy bridge")
     commands = parser.add_subparsers(dest="command")
     commands.add_parser("devices", help="Enumerate the R3SD11 vendor HID interface")
     scan = commands.add_parser("scan", help="Read all 128 matrix slots once")
@@ -15,7 +15,7 @@ def main():
     bench.add_argument("--keys", type=int, nargs="+", required=True)
     bench.add_argument("--seconds", type=float, default=5)
     bench.add_argument("--out", default="reports/benchmark.json")
-    commands.add_parser("gui", help="Open the calibration and steering utility")
+    commands.add_parser("gui", help="Open the calibration and vJoy output utility")
     commands.add_parser("check-output", help="Sweep vJoy device 1 briefly and verify Windows readback")
     args = parser.parse_args()
     if args.command in (None, "gui"):
