@@ -1,0 +1,7 @@
+.venv/
+.tools/
+__pycache__/
+*.py[cod]
+reports/
+settings.local.json
+settings.local.tmp
